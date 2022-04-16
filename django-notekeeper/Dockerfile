@@ -19,7 +19,7 @@ COPY . /usr/src/app
 
 EXPOSE 8000
 
-RUN python notekeeper/manage.py migrate
+RUN python django-notekeeper/notekeeper/manage.py migrate
 
-CMD ["python", "notekeeper/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "django-notekeeper/notekeeper/manage.py", "runserver", "0.0.0.0:8000"]
 
