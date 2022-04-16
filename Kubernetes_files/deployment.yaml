@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-notekeeper
+  labels:
+    app: django-notekeeper
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: django-notekeeper
+  template:
+    metadata:
+      labels:
+        app: django-notekeeper
+    spec:
+      containers:
+      - name: notekeeper
+        image: muhammadatef/django-notekeeper:latest
+        ports:
+        - containerPort: 8000
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d # mount nginx-conf volumn to /etc/nginx/conf.d/
+          readOnly: true
+          name: nginx-config
+        - mountPath: /var/log/nginx
+          name: log
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-conf # place ConfigMap `nginx-conf` on /etc/nginx/conf.d/
+          items:
+            - key: default.conf
+              path: default.conf
+            
+      - name: log
+        emptyDir: {}
+
